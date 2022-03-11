@@ -38,9 +38,9 @@ public class Robot extends TimedRobot {
   private CANSparkMax lifterMotor;
   private CANSparkMax shooterMotor;
   public Double startTime;
-  private RelativeEncoder shooterEncoder;
-  private DigitalInput lifterSwitch;
-  boolean ballPresent;
+  private RelativeEncoder shooterEncoder; //declares an encoder on the shooter
+  private DigitalInput lifterSwitch; 
+  boolean ballPresent; //decalres the ball present varible
 
   
   DoubleSolenoid intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1); //creates double solenoid (solenoid2) on output 0 and 1
@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
     intakeMotor = new CANSparkMax(5, MotorType.kBrushed);
     lifterMotor = new CANSparkMax(6, MotorType.kBrushless);
     shooterMotor = new CANSparkMax(7, MotorType.kBrushless);
-    shooterEncoder = shooterMotor.getEncoder();
+    shooterEncoder = shooterMotor.getEncoder(); 
     lifterSwitch = new DigitalInput(9);
   }
 
@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {
+  public void autonomousPeriodic() { //drives the robot forward for 2 seconds during auto
     double time = Timer.getFPGATimestamp();
     if(time - startTime < 2){
       myRobot.arcadeDrive(-0.5, 0);
@@ -102,34 +102,34 @@ public class Robot extends TimedRobot {
       double startTime = Timer.getFPGATimestamp();
       double time = Timer.getFPGATimestamp();
       intakeSolenoid.set(Value.kReverse); //sets solenoid in reverse position, can also set for kOff and kForward
-      while(!((time - startTime > 2) || (ballPresent))){
+      while(!((time - startTime > 2) || (ballPresent))){ //runs the lifter until a ball is detected or 2 seconds have passed
         intakeMotor.set(-0.5);
         lifterMotor.set(0.5);
         time = Timer.getFPGATimestamp();
         ballPresent = lifterSwitch.get();
         myRobot.arcadeDrive(-driverStick.getY(), driverStick.getX());
       }
-      intakeMotor.set(0);
+      intakeMotor.set(0); //when while loop is exited shut off motors and set ball present to false
       lifterMotor.set(0);
       ballPresent = false;
     }
     if (driverStick.getRawButtonPressed(1)){
-      shooterMotor.set(0.8);
+      shooterMotor.set(0.8); //runs the shooter motor
       
       
     }
     if(driverStick.getRawButtonReleased(1)){
-      lifterMotor.set(0);
-      shooterMotor.set(0);
+      lifterMotor.set(0); //shuts off the shooter motor
+      
     }
-    double shooterSpeed = shooterEncoder.getVelocity();
-    if(shooterSpeed > 4000) {
+    double shooterSpeed = shooterEncoder.getVelocity();  //sets the shooter speed variable
+    if(shooterSpeed > 4000) { //runs the lifter motor only if the shooter motor has reached speed
       lifterMotor.set(0.3);
     }
     else{
-      lifterMotor.set(0);
+      lifterMotor.set(0); //shuts off the lifter if shooter is under speed
     }
-    myRobot.arcadeDrive(-driverStick.getY(), driverStick.getX());
+    myRobot.arcadeDrive(-driverStick.getY(), driverStick.getX()); 
 
   }
 
